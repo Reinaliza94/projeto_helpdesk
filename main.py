@@ -20,9 +20,15 @@ def menu():
 def chamado():
  return render_template('cadastro_chamado.html')
 
+@app.route('/listachamado')
+def listachamado():
+ return render_template('listar_chamados.html')
+
 @app.route('/tecnico')
 def tecnico():
  return render_template('cadastro_tecnico.html')
+
+
 
 #Inicia o servidor de desenvolvimento.
 if __name__ == '__main__':
