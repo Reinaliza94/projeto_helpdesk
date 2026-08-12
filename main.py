@@ -1,4 +1,4 @@
-from flask import Flask, render_template, render_template_string, request, redirect, url_for, session
+from flask import Flask, render_template
 
 # Criação de uma instância do Flask
 app = Flask(__name__)
@@ -15,6 +15,14 @@ def home():
 @app.route('/menu')
 def menu():
  return render_template('menu.html')    
+
+@app.route('/chamado')
+def chamado():
+ return render_template('cadastro_chamado.html')
+
+@app.route('/tecnico')
+def tecnico():
+ return render_template('cadastro_tecnico.html')
 
 #Inicia o servidor de desenvolvimento.
 if __name__ == '__main__':
