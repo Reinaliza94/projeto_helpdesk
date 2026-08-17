@@ -67,3 +67,64 @@ nav a:hover{
 .btn-sair:hover{
     background:#5d9f69;
 }
+
+/* BOTÃO CADASTRO */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #2f5d50;
+    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.dropdown-btn:hover {
+    background-color: #a8d8b2;
+}
+
+/* MENU CASCATA */
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    padding: 8px 0;
+    z-index: 1000;
+}
+
+/* MOSTRA O MENU AO PASSAR O MOUSE */
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* LINKS DO MENU */
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    color: #2f5d50;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.dropdown-menu a:hover {
+    background-color: #edf7ef;
+}

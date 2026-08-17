@@ -16,18 +16,23 @@ def home():
 def menu():
  return render_template('menu.html')    
 
-@app.route('/chamado')
-def chamado():
- return render_template('cadastro_chamado.html')
+@app.route("/cadastro_chamado")
+def cadastro_chamado():
+    return render_template("cadastro_chamado.html")
+
+
+@app.route("/cadastro_tecnico")
+def cadastro_tecnico():
+    return render_template("cadastro_tecnico.html")
+
+
+@app.route("/cadastro_usuario")
+def cadastro_usuario():
+    return render_template("cadastro_usuario.html")
 
 @app.route('/listachamado')
 def listachamado():
  return render_template('listar_chamados.html')
-
-@app.route('/tecnico')
-def tecnico():
- return render_template('cadastro_tecnico.html')
-
 
 
 #Inicia o servidor de desenvolvimento.

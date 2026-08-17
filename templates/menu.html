@@ -1,18 +1,60 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="static/css/menu.css">
-    </head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+
 <body>
+
     <div class="logo">
         <i class="fa-solid fa-headset"></i>
         <span>Help Desk</span>
     </div>
 
     <nav>
-        <a href="/listachamado"> Meus Chamados</a>
-        <a href="/home"> Dashboard</a>
-        <a href="/"> Sair <i class="fa-solid fa-right-from-bracket"></i></a>
+
+        <a href="/home">Home</a>
+
+        <!-- MENU CADASTRO -->
+        <div class="dropdown">
+
+            <button class="dropdown-btn">
+                <i class="fa-solid fa-plus-circle"></i>
+                Cadastro
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="dropdown-menu">
+
+                <a href="{{ url_for('cadastro_chamado') }}">
+                    <i class="fa-solid fa-headset"></i>
+                    Cadastro de Chamado
+                </a>
+
+                <a href="{{ url_for('cadastro_tecnico') }}">
+                    <i class="fa-solid fa-user-cog"></i>
+                    Cadastro de Técnico
+                </a>
+
+                <a href="{{ url_for('cadastro_usuario') }}">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Cadastro de Usuário
+                </a>
+
+            </div>
+
+        </div>
+
+        <a href="/listachamado">Meus Chamados</a>
+
+        <a href="/">
+            Sair
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+
     </nav>
-        
+
 </body>
 </html>
