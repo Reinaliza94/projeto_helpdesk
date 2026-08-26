@@ -34,6 +34,9 @@ def cadastro_usuario():
 def listachamado():
  return render_template('listar_chamados.html')
 
+from models.usuarios_model import *
+from models.chamados_model import *
+
 
 #Inicia o servidor de desenvolvimento.
 if __name__ == '__main__':
