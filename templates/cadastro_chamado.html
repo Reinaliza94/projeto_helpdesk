@@ -5,9 +5,7 @@ Cadastro de Chamado
 {% endblock %}
 
 {% block css %}
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/cadastro.css') }}">
+<link rel="stylesheet"href="{{ url_for('static', filename='css/cadastro.css') }}">
 {% endblock %}
 
 {% block conteudo %}
@@ -19,13 +17,7 @@ Cadastro de Chamado
 <div>
     <label for="titulo">Título:</label>
 
-    <input
-        type="text"
-        id="titulo"
-        name="titulo"
-        maxlength="200"
-        required
-    >
+    <input type="text" id="titulo" name="titulo" maxlength="200" required>
 </div>
 
 

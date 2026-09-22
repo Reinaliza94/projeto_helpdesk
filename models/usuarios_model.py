@@ -1,17 +1,16 @@
 #Model usuarios
 from models.conexao import *
+from sqlalchemy import Column, Integer, String
 
 class Usuarios(Base):
  
     __tablename__ = "usuarios"
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     nome = Column("nome", String(200))
-    email = Column("email", String(100))
+    email = Column("email", String(50))
     departamento = Column("departamento", String(200))
     ramal = Column("ramal", String(15))
     status = Column("status", String(15))
-
- #A funçao __init__ serve para inicializar a classe (construtor da classe)
 
     def __init__(self, nome, email, departamento, ramal, status):
         self.nome = nome
@@ -20,5 +19,4 @@ class Usuarios(Base):
         self.ramal = ramal
         self.status = status
 
-# Criando as tabelas no banco de dados (caso não existam)
 Base.metadata.create_all(bind=engine)
