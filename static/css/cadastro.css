@@ -1,0 +1,88 @@
+main h1 {
+text-align: center;
+margin-bottom: 30px;
+color: #2f5d50;
+font-size: 28px;
+}
+
+form {
+width: 100%;
+max-width: 750px;
+margin: 0 auto;
+padding: 30px;
+
+background: #ffffff;
+border-radius: 12px;
+
+box-shadow: 0 4px 15px rgba(47, 93, 80, 0.12);
+
+
+}
+
+form div {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+margin-bottom: 7px;
+
+
+color: #2f5d50;
+font-weight: bold;
+
+
+}
+
+input,
+textarea,
+select {
+width: 100%;
+padding: 11px;
+
+
+border: 1px solid #b8e6c1;
+border-radius: 7px;
+
+background: #f8fcf9;
+color: #2f5d50;
+
+font-size: 15px;
+
+
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+outline: none;
+border-color: #7dbb88;
+}
+
+textarea {
+min-height: 130px;
+resize: vertical;
+}
+
+button {
+width: 100%;
+padding: 12px;
+
+
+border: none;
+border-radius: 7px;
+
+background: #7dbb88;
+color: white;
+
+font-size: 16px;
+font-weight: bold;
+
+cursor: pointer;
+
+
+}
+
+button:hover {
+background: #2f5d50;
+}

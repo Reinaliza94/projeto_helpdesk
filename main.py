@@ -1,4 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
+
+from models.usuarios_model import *
+from models.chamados_model import *
+from models.conexao import *
+from datetime import datetime
+
+app = Flask(__name__)
 
 # Criação de uma instância do Flask
 app = Flask(__name__)
@@ -16,8 +23,43 @@ def home():
 def menu():
  return render_template('menu.html')    
 
-@app.route("/cadastro_chamado")
+@app.route('/cadastro_chamado', methods=["GET", "POST"])
 def cadastro_chamado():
+
+    if request.method == "POST":
+
+        titulo = request.form["titulo"]
+        descricao = request.form["descricao"]
+        status = request.form["status"]
+        prioridade = request.form["prioridade"]
+        categoria = request.form["categoria"]
+        id_usuario = request.form["id_usuario"]
+        responsavel_tecnico = request.form["responsavel_tecnico"]
+
+        data_abertura = datetime.now()
+        data_fechamento = None
+
+        chamado = Chamados(
+            titulo,
+            descricao,
+            data_abertura,
+            data_fechamento,
+            status,
+            prioridade,
+            categoria,
+            id_usuario,
+            responsavel_tecnico
+        )
+
+        session = Session()
+
+        session.add(chamado)
+        session.commit()
+
+        session.close()
+
+        return "Chamado cadastrado com sucesso!"
+
     return render_template("cadastro_chamado.html")
 
 
@@ -33,10 +75,6 @@ def cadastro_usuario():
 @app.route('/listachamado')
 def listachamado():
  return render_template('listar_chamados.html')
-
-from models.usuarios_model import *
-from models.chamados_model import *
-
 
 #Inicia o servidor de desenvolvimento.
 if __name__ == '__main__':
