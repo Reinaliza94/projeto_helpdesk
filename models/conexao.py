@@ -1,13 +1,14 @@
-from sqlalchemy import create_engine, text
+import os
+
+from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DB_SERVER_URL = "mysql+pymysql://root:@localhost"
-DATABASE_URL = "mysql+pymysql://root:@localhost/test"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
-server_engine = create_engine(DB_SERVER_URL, echo=True)
-with server_engine.begin() as conn:
-    conn.execute(text("CREATE DATABASE IF NOT EXISTS test"))
+def _build_engine():
+    return create_engine(DATABASE_URL, echo=False, future=True)
 
-engine = create_engine(DATABASE_URL, echo=True)
+
+engine = _build_engine()
 Base = declarative_base()
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
