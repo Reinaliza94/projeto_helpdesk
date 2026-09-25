@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from flask import Flask, render_template, request
+
+from datetime import datetime
 
 
 from models.conexao import Base, Session, engine
