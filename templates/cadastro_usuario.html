@@ -16,22 +16,27 @@ Cadastro de Usuário
 
     <div> 
         <label for="nome">Nome</label>
-        <input type="text" name="nome" maxlength="200" required>
+        <input type="text" name="nome" maxlength="200" required value="{{ request.form.nome }}">
     </div>
 
     <div>
         <label for="email">E-mail</label>
-        <input type="email" name="email" maxlength="50" required>
+        <input type="email" name="email" maxlength="50" required value="{{ request.form.email }}">
+    </div>
+
+    <div>
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" maxlength="100" required value="{{ request.form.senha }}">
     </div>
 
     <div>
         <label for="departamento"> Departamento</label>
-        <input type="text" name="departamento" maxlength="200" required>
+        <input type="text" name="departamento" maxlength="200" required value="{{ request.form.departamento }}">
     </div>
 
     <div>
         <label for="ramal">Ramal</label>
-        <input type="number" name="ramal" maxlength="15">
+        <input type="number" name="ramal" maxlength="15" value="{{ request.form.ramal }}">
     </div>
 
     <div>

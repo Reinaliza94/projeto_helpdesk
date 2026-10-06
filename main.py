@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request
 
+from flask import Flask, render_template, request
+from sqlalchemy import inspect, text
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
-
-from models.conexao import Base, Session, engine
+from models.conexao import Base, engine
 from models.tecnicos_model import Tecnicos
 from models.usuarios_model import Usuarios
 from models.chamados_model import Chamados
@@ -11,6 +12,20 @@ from models.chamados_model import Chamados
 app = Flask(__name__)
 
 Base.metadata.create_all(bind=engine)
+
+with engine.begin() as conexao:
+    colunas_usuario = {
+        coluna["name"] for coluna in inspect(conexao).get_columns("usuarios")
+    }
+    if "senha" not in colunas_usuario:
+        conexao.execute(
+            text("ALTER TABLE usuarios ADD COLUMN senha VARCHAR(100)")
+        )
+
+with engine.connect() as conexao:
+    print("Banco em uso:", conexao.exec_driver_sql("PRAGMA database_list").fetchone()[2])
+
+Session = sessionmaker(bind=engine)
 
 
 @app.route('/')
@@ -28,16 +43,18 @@ def menu():
     return render_template('menu.html')
 
 
-@app.route('/cadastro_chamado', methods=["GET", "POST"])
+@app.route('/cadastro_chamado', methods=['GET', 'POST'])
 def cadastro_chamado():
-    if request.method == "POST":
-        titulo = request.form["titulo"]
-        descricao = request.form["descricao"]
-        status = request.form["status"]
-        prioridade = request.form["prioridade"]
-        categoria = request.form["categoria"]
-        id_usuario = request.form["id_usuario"]
-        responsavel_tecnico = request.form["responsavel_tecnico"]
+
+    if request.method == 'POST':
+
+        titulo = request.form['titulo']
+        descricao = request.form['descricao']
+        status = request.form['status']
+        prioridade = request.form['prioridade']
+        categoria = request.form['categoria']
+        id_usuario = request.form['id_usuario']
+        responsavel_tecnico = request.form['responsavel_tecnico']
 
         data_abertura = datetime.now()
         data_fechamento = None
@@ -51,59 +68,80 @@ def cadastro_chamado():
             prioridade,
             categoria,
             id_usuario,
-            responsavel_tecnico,
+            responsavel_tecnico
         )
 
         session = Session()
+
         session.add(chamado)
         session.commit()
         session.close()
 
-        return "Chamado cadastrado com sucesso!"
+        return 'Chamado cadastrado com sucesso!'
 
-    return render_template("cadastro_chamado.html")
+    return render_template('cadastro_chamado.html')
 
 
-@app.route("/cadastro_tecnico", methods=["GET","POST"])
+@app.route('/cadastro_tecnico', methods=['GET', 'POST'])
 def cadastro_tecnico():
-    if request.method == "POST":
-        nome = request.form["nome"]
-        email = request.form["email"]
-        departamento = request.form["departamento"]
-        ramal = request.form["ramal"]
-        status = request.form["status"]
 
-        tecnico = Tecnicos(nome, email, departamento, ramal, status)
+    if request.method == 'POST':
+
+        nome = request.form['nome']
+        email = request.form['email']
+        departamento = request.form['departamento']
+        ramal = request.form['ramal']
+        status = request.form['status']
+
+        tecnico = Tecnicos(
+            nome,
+            email,
+            departamento,
+            ramal,
+            status
+        )
 
         session = Session()
+
         session.add(tecnico)
         session.commit()
         session.close()
 
-        return "Técnico cadastrado com sucesso!"
+        return 'Técnico cadastrado com sucesso!'
 
-    return render_template("cadastro_tecnico.html")
+    return render_template('cadastro_tecnico.html')
 
 
-@app.route("/cadastro_usuario", methods=["GET", "POST"])
+@app.route('/cadastro_usuario', methods=['GET', 'POST'])
 def cadastro_usuario():
-    if request.method == "POST":
-        nome = request.form["nome"]
-        email = request.form["email"]
-        departamento = request.form["departamento"]
-        ramal = request.form["ramal"]
-        status = request.form["status"]
 
-        usuario = Usuarios(nome, email, departamento, ramal, status)
+    if request.method == 'POST':
+
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
+        departamento = request.form['departamento']
+        ramal = request.form['ramal']
+        status = request.form['status']
+
+        usuario = Usuarios(
+            nome,
+            email,
+            senha,
+            departamento,
+            ramal,
+            status
+        )
 
         session = Session()
+
         session.add(usuario)
         session.commit()
         session.close()
 
-        return "Usuário cadastrado com sucesso!"
+        return render_template('cadastro_usuario.html')
 
-    return render_template("cadastro_usuario.html")
+    return render_template('cadastro_usuario.html')
 
 
 @app.route('/listachamado')
