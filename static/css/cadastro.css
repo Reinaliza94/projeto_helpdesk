@@ -47,7 +47,7 @@ border-radius: 7px;
 background: #f8fcf9;
 color: #2f5d50;
 
-font-size: 15px;
+font-size: 16px;
 
 
 }
@@ -150,4 +150,59 @@ gap: 12px;
 
 .botao-editar-novamente {
 background: #2f5d50;
+}
+
+@media (max-width: 768px) {
+    form {
+        padding: 24px;
+    }
+
+    .confirmacao-cadastro {
+        margin: 24px auto;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    main h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    form {
+        padding: 18px;
+    }
+
+    form div {
+        margin-bottom: 16px;
+    }
+
+    input,
+    textarea,
+    select {
+        padding: 12px;
+    }
+
+    .confirmacao-cadastro {
+        margin: 16px auto;
+        padding: 20px 16px;
+    }
+
+    .confirmacao-cadastro h1 {
+        font-size: 22px;
+    }
+
+    .dados-atualizados div {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .acoes-confirmacao {
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .botao-confirmacao {
+        width:100%;
+    }
 }

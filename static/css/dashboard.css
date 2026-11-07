@@ -154,7 +154,7 @@
     text-align:center;
 }
 
-@media (max-width:760px){
+@media (max-width: 900px) {
     .dashboard{
         padding:0;
     }
@@ -165,11 +165,32 @@
     }
 
     .cards{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
 
     .barra-linha{
-        grid-template-columns:100px minmax(60px,1fr) 32px;
+        grid-template-columns:120px minmax(60px,1fr) 32px;
         gap:8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cards {
+        grid-template-columns:1fr;
+    }
+
+    .painel {
+        margin-top:24px;
+        padding:18px;
+    }
+
+    .barra-linha {
+        grid-template-columns:90px minmax(0,1fr) 28px;
+        gap:8px;
+        font-size:14px;
+    }
+
+    .barra-fundo {
+        height:14px;
     }
 }

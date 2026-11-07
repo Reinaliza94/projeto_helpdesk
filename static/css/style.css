@@ -10,9 +10,27 @@ background: #edf7ef;
 min-height: 100vh;
 display: flex;
 flex-direction: column;
+overflow-x: hidden;
 }
 
 main {
 padding: 40px;
 flex: 1;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 16px;
+  }
+
+  main h1 {
+    font-size: 24px;
+    overflow-wrap: anywhere;
+  }
 }

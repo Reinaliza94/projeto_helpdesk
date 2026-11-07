@@ -111,7 +111,9 @@
 
 /* MOSTRA O MENU AO PASSAR O MOUSE */
 
-.site-header .dropdown:hover .dropdown-menu {
+.site-header .dropdown:hover .dropdown-menu,
+.site-header .dropdown:focus-within .dropdown-menu,
+.site-header .dropdown.is-open .dropdown-menu {
     display: block;
 }
 
@@ -131,20 +133,100 @@
     background-color: #a8d8b2;
 }
 
-@media (max-width:760px){
+.site-header .menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.site-header .menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 5px 0;
+    border-radius: 2px;
+    background: #2f5d50;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 768px) {
     .site-header{
-        align-items:flex-start;
-        flex-direction:column;
-        padding:15px 20px;
+        align-items:center;
+        flex-direction:row;
+        justify-content:space-between;
+        gap:8px;
+        padding:16px 24px;
+    }
+
+    .site-header .menu-toggle {
+        display:block;
+    }
+
+    .site-header .menu-toggle[aria-expanded="true"] span:first-child {
+        transform:translateY(7px) rotate(45deg);
+    }
+
+    .site-header .menu-toggle[aria-expanded="true"] span:nth-child(2) {
+        opacity:0;
+    }
+
+    .site-header .menu-toggle[aria-expanded="true"] span:last-child {
+        transform:translateY(-7px) rotate(-45deg);
     }
 
     .site-header nav{
+        display:none;
         width:100%;
+        align-items:stretch;
+        flex-direction:column;
         gap:4px;
+    }
+
+    .menu-js .site-header nav.is-open {
+        display:flex;
+    }
+
+    .site-header nav:not(.is-open) {
+        display:flex;
+    }
+
+    .menu-js .site-header nav:not(.is-open) {
+        display:none;
     }
 
     .site-header nav a,
     .site-header .dropdown-btn{
-        padding:10px;
+        width:100%;
+        min-height:44px;
+        padding:10px 12px;
+    }
+
+    .site-header .dropdown {
+        width:100%;
+    }
+
+    .site-header .dropdown-menu {
+        position:static;
+        width:100%;
+        box-shadow:none;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-header {
+        padding:14px 16px;
+    }
+
+    .site-header .logo {
+        font-size:21px;
+    }
+
+    .site-header .logo i {
+        font-size:24px;
     }
 }

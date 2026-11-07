@@ -4,20 +4,37 @@
         <span>Help Desk</span>
     </div>
 
-    <nav>
+    <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Abrir menu"
+        aria-controls="menu-principal"
+        aria-expanded="false"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="menu-principal">
 
         <a href="/home">Home</a>
 
         <!-- MENU CADASTRO -->
         <div class="dropdown">
 
-            <button class="dropdown-btn">
+            <button
+                class="dropdown-btn"
+                type="button"
+                aria-expanded="false"
+                aria-controls="submenu-cadastro"
+            >
                 <i class="fa-solid fa-plus-circle"></i>
                 Cadastro
                 <i class="fa-solid fa-chevron-down"></i>
             </button>
 
-            <div class="dropdown-menu">
+            <div class="dropdown-menu" id="submenu-cadastro">
 
                 <a href="{{ url_for('cadastro_chamado') }}">
                     <i class="fa-solid fa-headset"></i>
