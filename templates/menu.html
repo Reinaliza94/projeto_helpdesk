@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
-</head>
-
-<body>
-
+<header class="site-header">
     <div class="logo">
         <i class="fa-solid fa-headset"></i>
         <span>Help Desk</span>
@@ -43,6 +34,11 @@
                     Cadastro de Usuário
                 </a>
 
+                <a href="{{ url_for('listausuario') }}">
+                    <i class="fa-solid fa-users"></i>
+                    Lista de Usuários
+                </a>
+
             </div>
 
         </div>
@@ -55,6 +51,4 @@
         </a>
 
     </nav>
-
-</body>
-</html>
+</header>

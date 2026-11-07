@@ -1,10 +1,11 @@
 /* Cabeçalho */
 
-header{
+.site-header{
     background:#b8e6c1;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    flex-wrap:wrap;
     padding:15px 40px;
     box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
@@ -12,7 +13,7 @@ header{
 
 /* Logo */
 
-.logo{
+.site-header .logo{
     display:flex;
     align-items:center;
     gap:10px;
@@ -21,21 +22,22 @@ header{
     color:#2f5d50;
 }
 
-.logo i{
+.site-header .logo i{
     font-size:28px;
 }
 
 
 /* Menu horizontal */
 
-nav{
+.site-header nav{
     display:flex;
     align-items:center;
     gap:15px;
+    flex-wrap:wrap;
 }
 
 
-nav a{
+.site-header nav a{
     display:flex;
     align-items:center;
     gap:8px;
@@ -50,7 +52,7 @@ nav a{
 
 /* Efeito ao passar o mouse */
 
-nav a:hover{
+.site-header nav a:hover{
     background:#96d5a4;
     color:white;
 }
@@ -70,11 +72,11 @@ nav a:hover{
 
 /* BOTÃO CADASTRO */
 
-.dropdown {
+.site-header .dropdown {
     position: relative;
 }
 
-.dropdown-btn {
+.site-header .dropdown-btn {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -88,13 +90,13 @@ nav a:hover{
     font-size: 16px;
 }
 
-.dropdown-btn:hover {
+.site-header .dropdown-btn:hover {
     background-color: #a8d8b2;
 }
 
 /* MENU CASCATA */
 
-.dropdown-menu {
+.site-header .dropdown-menu {
     display: none;
     position: absolute;
     top: 100%;
@@ -109,13 +111,13 @@ nav a:hover{
 
 /* MOSTRA O MENU AO PASSAR O MOUSE */
 
-.dropdown:hover .dropdown-menu {
+.site-header .dropdown:hover .dropdown-menu {
     display: block;
 }
 
 /* LINKS DO MENU */
 
-.dropdown-menu a {
+.site-header .dropdown-menu a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -125,6 +127,24 @@ nav a:hover{
     font-weight: normal;
 }
 
-.dropdown-menu a:hover {
+.site-header .dropdown-menu a:hover {
     background-color: #a8d8b2;
+}
+
+@media (max-width:760px){
+    .site-header{
+        align-items:flex-start;
+        flex-direction:column;
+        padding:15px 20px;
+    }
+
+    .site-header nav{
+        width:100%;
+        gap:4px;
+    }
+
+    .site-header nav a,
+    .site-header .dropdown-btn{
+        padding:10px;
+    }
 }

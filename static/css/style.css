@@ -7,8 +7,12 @@
 
 body {
 background: #edf7ef;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
 }
 
 main {
 padding: 40px;
+flex: 1;
 }

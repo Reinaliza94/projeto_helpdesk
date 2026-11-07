@@ -15,11 +15,109 @@ Dashboard
 
 <section class="dashboard">
 
-    <h1>Dashboard</h1>
+    <header class="dashboard-cabecalho">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="subtitulo">Visão geral dos chamados técnicos</p>
+        </div>
+        <a class="botao-novo-chamado" href="{{ url_for('cadastro_chamado') }}">
+            Novo chamado
+        </a>
+    </header>
 
-    <p class="subtitulo">
-        Visão geral dos chamados técnicos
-    </p>
+    <section class="cards" aria-label="Resumo dos chamados">
+        <article class="card">
+            <div>
+                <p>Total de chamados</p>
+                <h2>{{ total_chamados }}</h2>
+            </div>
+        </article>
+        <article class="card">
+            <div>
+                <p>Em aberto</p>
+                <h2>{{ total_abertos }}</h2>
+            </div>
+        </article>
+        <article class="card">
+            <div>
+                <p>Fechados</p>
+                <h2>{{ total_fechados }}</h2>
+            </div>
+        </article>
+    </section>
 
+    <section class="painel grafico-painel" aria-labelledby="grafico-titulo">
+        <h2 id="grafico-titulo">Chamados por status</h2>
+        <div class="grafico-status">
+            {% for item in status_chart %}
+            <div class="barra-linha">
+                <span class="barra-nome">{{ item.nome }}</span>
+                <div
+                    class="barra-fundo"
+                    role="img"
+                    aria-label="{{ item.nome }}: {{ item.quantidade }} chamados"
+                >
+                    <div class="barra-valor" style="width: {{ item.percentual }}%;"></div>
+                </div>
+                <strong class="barra-contagem">{{ item.quantidade }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="grafico-legenda">
+            Chamados “Em andamento” também são contabilizados como abertos.
+        </p>
+    </section>
+
+    <section class="painel" aria-labelledby="tabela-titulo">
+        <h2 id="tabela-titulo">Todos os chamados</h2>
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Abertura</th>
+                        <th>Fechamento</th>
+                        <th>Status</th>
+                        <th>Prioridade</th>
+                        <th>Categoria</th>
+                        <th>ID do usuário</th>
+                        <th>Responsável técnico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chamado in chamados %}
+                    <tr>
+                        <td>{{ chamado.id }}</td>
+                        <td>{{ chamado.titulo }}</td>
+                        <td>{{ chamado.descricao }}</td>
+                        <td>
+                            {{ chamado.data_abertura.strftime('%d/%m/%Y %H:%M')
+                               if chamado.data_abertura else '-' }}
+                        </td>
+                        <td>
+                            {{ chamado.data_fechamento.strftime('%d/%m/%Y %H:%M')
+                               if chamado.data_fechamento else '-' }}
+                        </td>
+                        <td>{{ chamado.status or 'Sem status' }}</td>
+                        <td>{{ chamado.prioridade }}</td>
+                        <td>{{ chamado.categoria }}</td>
+                        <td>{{ chamado.id_usuario }}</td>
+                        <td>{{ chamado.responsavel_tecnico or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="sem-chamados" colspan="10">
+                            Nenhum chamado cadastrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</section>
 
 {% endblock %}

@@ -86,3 +86,68 @@ cursor: pointer;
 button:hover {
 background: #2f5d50;
 }
+
+.confirmacao-cadastro {
+max-width: 750px;
+margin: 40px auto;
+padding: 30px;
+text-align: center;
+background: #ffffff;
+border-radius: 12px;
+box-shadow: 0 4px 15px rgba(47, 93, 80, 0.12);
+}
+
+.confirmacao-cadastro h1 {
+margin-bottom: 24px;
+}
+
+.botao-confirmacao {
+display: inline-block;
+min-width: 120px;
+padding: 12px 24px;
+border-radius: 7px;
+background: #7dbb88;
+color: #ffffff;
+font-weight: bold;
+text-decoration: none;
+}
+
+.botao-confirmacao:hover {
+background: #2f5d50;
+}
+
+.dados-atualizados {
+margin: 0 auto 24px;
+max-width: 500px;
+text-align: left;
+}
+
+.dados-atualizados div {
+display: grid;
+grid-template-columns: minmax(120px, 1fr) 2fr;
+gap: 16px;
+padding: 10px 0;
+border-bottom: 1px solid #e3eee5;
+}
+
+.dados-atualizados dt {
+color: #2f5d50;
+font-weight: bold;
+}
+
+.dados-atualizados dd {
+margin: 0;
+color: #3e554b;
+overflow-wrap: anywhere;
+}
+
+.acoes-confirmacao {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.botao-editar-novamente {
+background: #2f5d50;
+}

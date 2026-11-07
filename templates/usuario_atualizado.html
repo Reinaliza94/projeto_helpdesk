@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Usuário atualizado
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<section class="confirmacao-cadastro">
+    <h1>Dados do usuário atualizados com sucesso!</h1>
+
+    <dl class="dados-atualizados">
+        <div>
+            <dt>Nome</dt>
+            <dd>{{ usuario.nome }}</dd>
+        </div>
+        <div>
+            <dt>E-mail</dt>
+            <dd>{{ usuario.email }}</dd>
+        </div>
+        <div>
+            <dt>Departamento</dt>
+            <dd>{{ usuario.departamento }}</dd>
+        </div>
+        <div>
+            <dt>Ramal</dt>
+            <dd>{{ usuario.ramal or '-' }}</dd>
+        </div>
+        <div>
+            <dt>Status</dt>
+            <dd>{{ usuario.status }}</dd>
+        </div>
+    </dl>
+
+    <div class="acoes-confirmacao">
+        <a class="botao-confirmacao" href="{{ url_for('listausuario') }}">Voltar para a lista</a>
+        <a
+            class="botao-confirmacao botao-editar-novamente"
+            href="{{ url_for('editar_usuario', usuario_id=usuario.id) }}"
+        >Editar novamente</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Editar Chamado
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tabela.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<h1>Editar Chamado</h1>
+
+<form action="{{ url_for('editar_chamado', chamado_id=chamado.id) }}" method="POST">
+    <div>
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" name="titulo" maxlength="200" value="{{ chamado.titulo }}" required>
+    </div>
+
+    <div>
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" name="descricao" maxlength="500" required>{{ chamado.descricao }}</textarea>
+    </div>
+
+    <div>
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            {% for status in ['Aberto', 'Em andamento', 'Fechado'] %}
+            <option value="{{ status }}" {% if chamado.status == status %}selected{% endif %}>
+                {{ status }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="prioridade">Prioridade</label>
+        <select id="prioridade" name="prioridade" required>
+            {% for prioridade in ['Baixa', 'Média', 'Alta'] %}
+            <option value="{{ prioridade }}" {% if chamado.prioridade == prioridade %}selected{% endif %}>
+                {{ prioridade }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="categoria">Categoria</label>
+        <input id="categoria" type="text" name="categoria" maxlength="100" value="{{ chamado.categoria }}" required>
+    </div>
+
+    <div>
+        <label for="id_usuario">ID do usuário</label>
+        <input id="id_usuario" type="number" name="id_usuario" min="1" value="{{ chamado.id_usuario }}" required>
+    </div>
+
+    <div>
+        <label for="responsavel_tecnico">Responsável técnico</label>
+        <input id="responsavel_tecnico" type="text" name="responsavel_tecnico" maxlength="200" value="{{ chamado.responsavel_tecnico or '' }}">
+    </div>
+
+    <button type="submit">Salvar alterações</button>
+    <a class="botao-acao botao-cancelar" href="{{ url_for('listachamado') }}">Cancelar</a>
+</form>
+{% endblock %}

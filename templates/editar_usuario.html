@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Editar Usuário
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tabela.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<h1>Editar Usuário</h1>
+
+<form action="{{ url_for('editar_usuario', usuario_id=usuario.id) }}" method="POST">
+    <div>
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" name="nome" maxlength="200" value="{{ usuario.nome }}" required>
+    </div>
+
+    <div>
+        <label for="email">E-mail</label>
+        <input id="email" type="email" name="email" maxlength="50" value="{{ usuario.email }}" required>
+    </div>
+
+    <div>
+        <label for="senha">Nova senha (opcional)</label>
+        <input id="senha" type="password" name="senha" maxlength="100" autocomplete="new-password">
+    </div>
+
+    <div>
+        <label for="departamento">Departamento</label>
+        <input id="departamento" type="text" name="departamento" maxlength="200" value="{{ usuario.departamento }}" required>
+    </div>
+
+    <div>
+        <label for="ramal">Ramal</label>
+        <input id="ramal" type="text" name="ramal" maxlength="15" value="{{ usuario.ramal or '' }}">
+    </div>
+
+    <div>
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="Ativo" {% if usuario.status == 'Ativo' %}selected{% endif %}>Ativo</option>
+            <option value="Inativo" {% if usuario.status == 'Inativo' %}selected{% endif %}>Inativo</option>
+        </select>
+    </div>
+
+    <button type="submit">Salvar alterações</button>
+    <a class="botao-acao botao-cancelar" href="{{ url_for('listausuario') }}">Cancelar</a>
+</form>
+{% endblock %}

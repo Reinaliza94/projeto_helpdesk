@@ -1,16 +1,69 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Chamados</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tabela.css') }}">
+{% endblock %}
 
- <!-- aqui informações específicas da sua página -->
- {% include 'menu.html' %}
- 
- <h2>Tela de listar chamados</h2>
- 
-</body>
-</html>
+{% block conteudo %}
+<h1>Lista de Chamados</h1>
+
+<div class="tabela-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Abertura</th>
+                <th>Fechamento</th>
+                <th>Status</th>
+                <th>Prioridade</th>
+                <th>Categoria</th>
+                <th>ID do usuário</th>
+                <th>Responsável técnico</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chamado in chamados %}
+            <tr>
+                <td>{{ chamado.id }}</td>
+                <td>{{ chamado.titulo }}</td>
+                <td>{{ chamado.descricao }}</td>
+                <td>
+                    {{ chamado.data_abertura.strftime('%d/%m/%Y %H:%M')
+                       if chamado.data_abertura else '-' }}
+                </td>
+                <td>
+                    {{ chamado.data_fechamento.strftime('%d/%m/%Y %H:%M')
+                       if chamado.data_fechamento else '-' }}
+                </td>
+                <td>{{ chamado.status }}</td>
+                <td>{{ chamado.prioridade }}</td>
+                <td>{{ chamado.categoria }}</td>
+                <td>{{ chamado.id_usuario }}</td>
+                <td>{{ chamado.responsavel_tecnico or '-' }}</td>
+                <td class="acoes-usuario">
+                    <a
+                        class="botao-acao botao-editar"
+                        href="{{ url_for('editar_chamado', chamado_id=chamado.id) }}"
+                    >Editar</a>
+                    <form
+                        class="form-excluir-usuario"
+                        action="{{ url_for('excluir_chamado', chamado_id=chamado.id) }}"
+                        method="POST"
+                        onsubmit="return confirm('Deseja realmente excluir o chamado?');"
+                    >
+                        <button class="botao-acao botao-excluir" type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="11">Nenhum chamado cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+.tabela-container {
+    overflow-x: auto;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.tabela-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.tabela-container th,
+.tabela-container td {
+    padding: 12px;
+    border: 1px solid #b8e6c1;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tabela-container th {
+    background: #2f5d50;
+    color: #ffffff;
+}
+
+.tabela-container tr:nth-child(even) {
+    background: #f8fcf9;
+}
+
+.acoes-usuario {
+    white-space: nowrap;
+}
+
+.botao-acao {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 6px;
+    color: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.botao-editar {
+    background: #2f5d50;
+}
+
+.botao-excluir {
+    background: #b83b3b;
+}
+
+.form-excluir-usuario {
+    display: inline;
+}
+
+.botao-cancelar {
+    margin-top: 12px;
+    background: #68756e;
+}

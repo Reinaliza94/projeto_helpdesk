@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help Desk - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
 
     <!-- Ícones -->
     <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -18,14 +19,17 @@
 
         body{
             background: linear-gradient(135deg,#dff5e1,#ccefd5,#b9e6c2);
-            height:100vh;
+            min-height:100vh;
             display:flex;
+            flex-direction:column;
             justify-content:center;
             align-items:center;
         }
 
         .login{
             width:380px;
+            max-width:calc(100% - 32px);
+            margin:auto;
             background:#ffffff;
             border-radius:18px;
             padding:35px;
@@ -103,11 +107,36 @@
             background:#4fa567;
         }
 
-        footer{
-            margin-top:25px;
-            color:#7c8d81;
-            font-size:13px;
+        .erro-login{
+            margin:0 0 18px;
+            padding:12px;
+            border-radius:8px;
+            background:#fdeaea;
+            color:#a12626;
+            font-weight:bold;
         }
+
+        .acoes-login{
+            display:grid;
+            gap:10px;
+            margin-top:14px;
+        }
+
+        .botao-cadastro{
+            display:block;
+            padding:12px;
+            border:1px solid #6fbf7f;
+            border-radius:8px;
+            color:#2f6f49;
+            font-weight:bold;
+            text-decoration:none;
+            transition:.3s;
+        }
+
+        .botao-cadastro:hover{
+            background:#e8f7eb;
+        }
+
     </style>
 </head>
 
@@ -123,27 +152,35 @@
 
     <p>Sistema de Gestão de Chamados Técnicos</p>
 
-    <form action="/home">
+    {% if usuario_invalido %}
+    <div class="erro-login" role="alert">Usuário inválido</div>
+    {% endif %}
+
+    <form id="login-form" action="{{ url_for('login') }}" method="POST">
 
         <div class="campo">
-            <label>Login</label>
-            <input type="text" name="login" placeholder="Digite seu usuário" required>
+            <label for="login">Usuário ou e-mail</label>
+            <input type="text" id="login" name="login" placeholder="Digite seu usuário" required>
         </div>
 
         <div class="campo">
             <label for="senha">Senha</label>
-            <input type="password" id="senha"name="senha" placeholder="Digite sua senha" required>
+            <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
         </div>
 
         <button type="submit">Entrar</button>
 
     </form>
 
-    <footer>
-        © 2026 - Desenvolvido por Izabel Reinaldo
-    </footer>
+    {% if usuario_invalido %}
+    <div class="acoes-login">
+        <a class="botao-cadastro" href="{{ url_for('cadastro_usuario') }}">Cadastrar novo usuário</a>
+    </div>
+    {% endif %}
 
 </div>
+
+{% include 'footer.html' %}
 
 </body>
 </html>

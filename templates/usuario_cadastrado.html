@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Usuário cadastrado
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<section class="confirmacao-cadastro">
+    <h1>Usuário cadastrado com sucesso!</h1>
+    <div class="acoes-confirmacao">
+        <a class="botao-confirmacao" href="{{ url_for('listausuario') }}">Ok</a>
+        <a
+            class="botao-confirmacao botao-editar-novamente"
+            href="{{ url_for('cadastro_usuario') }}"
+        >Cadastrar outro usuário</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,6 +1,5 @@
-
-from flask import Flask, render_template, request
-from sqlalchemy import inspect, text
+from flask import Flask, abort, redirect, render_template, request, url_for
+from sqlalchemy import func, inspect, text
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
@@ -28,14 +27,77 @@ with engine.connect() as conexao:
 Session = sessionmaker(bind=engine)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        identificador = request.form.get('login', '').strip()
+        senha = request.form.get('senha', '')
+
+        with Session() as session:
+            usuario = (
+                session.query(Usuarios)
+                .filter(
+                    (func.lower(Usuarios.nome) == identificador.lower())
+                    | (func.lower(Usuarios.email) == identificador.lower())
+                )
+                .first()
+            )
+            credenciais_validas = (
+                usuario is not None
+                and usuario.senha is not None
+                and usuario.senha == senha
+            )
+
+        if credenciais_validas:
+            return redirect(url_for('home'))
+
+        return render_template('login.html', usuario_invalido=True), 401
+
+    return render_template('login.html', usuario_invalido=False)
 
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    with Session() as session:
+        chamados = (
+            session.query(Chamados)
+            .order_by(Chamados.data_abertura.desc())
+            .all()
+        )
+
+    total_chamados = len(chamados)
+    total_fechados = sum(1 for chamado in chamados if chamado.status == 'Fechado')
+    total_abertos = total_chamados - total_fechados
+
+    contagem_status = {}
+    for chamado in chamados:
+        status = chamado.status or 'Sem status'
+        contagem_status[status] = contagem_status.get(status, 0) + 1
+
+    status_prioritarios = ['Aberto', 'Em andamento', 'Fechado']
+    status_exibidos = status_prioritarios + sorted(
+        status for status in contagem_status if status not in status_prioritarios
+    )
+    status_chart = [
+        {
+            'nome': status,
+            'quantidade': contagem_status.get(status, 0),
+            'percentual': round(
+                contagem_status.get(status, 0) / total_chamados * 100,
+                2,
+            ) if total_chamados else 0,
+        }
+        for status in status_exibidos
+    ]
+
+    return render_template(
+        'home.html',
+        chamados=chamados,
+        total_chamados=total_chamados,
+        total_abertos=total_abertos,
+        total_fechados=total_fechados,
+        status_chart=status_chart,
+    )
 
 
 @app.route('/menu')
@@ -71,15 +133,18 @@ def cadastro_chamado():
             responsavel_tecnico
         )
 
-        session = Session()
+        with Session() as session:
+            session.add(chamado)
+            session.commit()
 
-        session.add(chamado)
-        session.commit()
-        session.close()
-
-        return 'Chamado cadastrado com sucesso!'
+        return redirect(url_for('chamado_cadastrado'))
 
     return render_template('cadastro_chamado.html')
+
+
+@app.route('/chamado_cadastrado')
+def chamado_cadastrado():
+    return render_template('chamado_cadastrado.html')
 
 
 @app.route('/cadastro_tecnico', methods=['GET', 'POST'])
@@ -139,14 +204,152 @@ def cadastro_usuario():
         session.commit()
         session.close()
 
-        return render_template('cadastro_usuario.html')
+        return redirect(url_for('usuario_cadastrado'))
 
     return render_template('cadastro_usuario.html')
 
 
+@app.route('/usuario_cadastrado')
+def usuario_cadastrado():
+    return render_template('usuario_cadastrado.html')
+
+
 @app.route('/listachamado')
 def listachamado():
-    return render_template('listar_chamados.html')
+    with Session() as session:
+        chamados = (
+            session.query(Chamados)
+            .order_by(Chamados.data_abertura.desc())
+            .all()
+        )
+
+    return render_template('listar_chamados.html', chamados=chamados)
+
+
+@app.route('/chamado/<int:chamado_id>/editar', methods=['GET', 'POST'])
+def editar_chamado(chamado_id):
+    with Session() as session:
+        chamado = session.query(Chamados).filter_by(id=chamado_id).first()
+        if chamado is None:
+            abort(404)
+
+        if request.method == 'POST':
+            chamado.titulo = request.form['titulo']
+            chamado.descricao = request.form['descricao']
+            chamado.status = request.form['status']
+            chamado.prioridade = request.form['prioridade']
+            chamado.categoria = request.form['categoria']
+            chamado.id_usuario = request.form['id_usuario']
+            chamado.responsavel_tecnico = (
+                request.form.get('responsavel_tecnico', '').strip() or None
+            )
+            session.commit()
+            return redirect(url_for('listachamado'))
+
+        dados_chamado = {
+            'id': chamado.id,
+            'titulo': chamado.titulo,
+            'descricao': chamado.descricao,
+            'status': chamado.status,
+            'prioridade': chamado.prioridade,
+            'categoria': chamado.categoria,
+            'id_usuario': chamado.id_usuario,
+            'responsavel_tecnico': chamado.responsavel_tecnico,
+        }
+
+    return render_template('editar_chamado.html', chamado=dados_chamado)
+
+
+@app.route('/chamado/<int:chamado_id>/excluir', methods=['POST'])
+def excluir_chamado(chamado_id):
+    with Session() as session:
+        chamado = session.query(Chamados).filter_by(id=chamado_id).first()
+        if chamado is None:
+            abort(404)
+
+        session.delete(chamado)
+        session.commit()
+
+    return redirect(url_for('listachamado'))
+
+
+@app.route('/listausuario')
+def listausuario():
+    with Session() as session:
+        usuarios = (
+            session.query(Usuarios)
+            .order_by(Usuarios.nome.desc())
+            .all()
+        )
+
+    return render_template('lista_usuarios.html', usuarios=usuarios)
+
+
+@app.route('/usuario/<int:usuario_id>/editar', methods=['GET', 'POST'])
+def editar_usuario(usuario_id):
+    with Session() as session:
+        usuario = session.query(Usuarios).filter_by(id=usuario_id).first()
+        if usuario is None:
+            abort(404)
+
+        if request.method == 'POST':
+            usuario.nome = request.form['nome']
+            usuario.email = request.form['email']
+            usuario.departamento = request.form['departamento']
+            usuario.ramal = request.form.get('ramal', '').strip() or None
+            usuario.status = request.form['status']
+
+            nova_senha = request.form.get('senha', '').strip()
+            if nova_senha:
+                usuario.senha = nova_senha
+
+            session.commit()
+            return redirect(
+                url_for('usuario_atualizado', usuario_id=usuario.id)
+            )
+
+        dados_usuario = {
+            'id': usuario.id,
+            'nome': usuario.nome,
+            'email': usuario.email,
+            'departamento': usuario.departamento,
+            'ramal': usuario.ramal,
+            'status': usuario.status,
+        }
+
+    return render_template('editar_usuario.html', usuario=dados_usuario)
+
+
+@app.route('/usuario/<int:usuario_id>/atualizado')
+def usuario_atualizado(usuario_id):
+    with Session() as session:
+        usuario = session.query(Usuarios).filter_by(id=usuario_id).first()
+        if usuario is None:
+            abort(404)
+
+        dados_usuario = {
+            'id': usuario.id,
+            'nome': usuario.nome,
+            'email': usuario.email,
+            'departamento': usuario.departamento,
+            'ramal': usuario.ramal,
+            'status': usuario.status,
+        }
+
+    return render_template('usuario_atualizado.html', usuario=dados_usuario)
+
+
+@app.route('/usuario/<int:usuario_id>/excluir', methods=['POST'])
+def excluir_usuario(usuario_id):
+    with Session() as session:
+        usuario = session.query(Usuarios).filter_by(id=usuario_id).first()
+        if usuario is None:
+            abort(404)
+
+        session.delete(usuario)
+        session.commit()
+
+    return redirect(url_for('listausuario'))
 
 
 if __name__ == '__main__':
