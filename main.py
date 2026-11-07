@@ -1,5 +1,6 @@
 from flask import Flask, abort, redirect, render_template, request, url_for
 from sqlalchemy import func, inspect, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
@@ -20,11 +21,76 @@ with engine.begin() as conexao:
         conexao.execute(
             text("ALTER TABLE usuarios ADD COLUMN senha VARCHAR(100)")
         )
+    if engine.dialect.name == "sqlite":
+        conexao.exec_driver_sql(
+            """
+            CREATE TRIGGER IF NOT EXISTS usuarios_nome_unico_insert
+            BEFORE INSERT ON usuarios
+            WHEN EXISTS (
+                SELECT 1 FROM usuarios
+                WHERE lower(trim(nome)) = lower(trim(NEW.nome))
+            )
+            BEGIN
+                SELECT RAISE(ABORT, 'usuario_nome_duplicado');
+            END
+            """
+        )
+        conexao.exec_driver_sql(
+            """
+            CREATE TRIGGER IF NOT EXISTS usuarios_email_unico_insert
+            BEFORE INSERT ON usuarios
+            WHEN EXISTS (
+                SELECT 1 FROM usuarios
+                WHERE lower(trim(email)) = lower(trim(NEW.email))
+            )
+            BEGIN
+                SELECT RAISE(ABORT, 'usuario_email_duplicado');
+            END
+            """
+        )
+        conexao.exec_driver_sql(
+            """
+            CREATE TRIGGER IF NOT EXISTS usuarios_nome_unico_update
+            BEFORE UPDATE OF nome ON usuarios
+            WHEN EXISTS (
+                SELECT 1 FROM usuarios
+                WHERE id != OLD.id
+                  AND lower(trim(nome)) = lower(trim(NEW.nome))
+            )
+            BEGIN
+                SELECT RAISE(ABORT, 'usuario_nome_duplicado');
+            END
+            """
+        )
+        conexao.exec_driver_sql(
+            """
+            CREATE TRIGGER IF NOT EXISTS usuarios_email_unico_update
+            BEFORE UPDATE OF email ON usuarios
+            WHEN EXISTS (
+                SELECT 1 FROM usuarios
+                WHERE id != OLD.id
+                  AND lower(trim(email)) = lower(trim(NEW.email))
+            )
+            BEGIN
+                SELECT RAISE(ABORT, 'usuario_email_duplicado');
+            END
+            """
+        )
 
 with engine.connect() as conexao:
     print("Banco em uso:", conexao.exec_driver_sql("PRAGMA database_list").fetchone()[2])
 
 Session = sessionmaker(bind=engine)
+
+
+def _usuario_ja_cadastrado(session, nome, email, usuario_id=None):
+    consulta = session.query(Usuarios.id).filter(
+        (func.lower(func.trim(Usuarios.nome)) == nome.lower())
+        | (func.lower(func.trim(Usuarios.email)) == email.lower())
+    )
+    if usuario_id is not None:
+        consulta = consulta.filter(Usuarios.id != usuario_id)
+    return consulta.first() is not None
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -37,8 +103,14 @@ def login():
             usuario = (
                 session.query(Usuarios)
                 .filter(
-                    (func.lower(Usuarios.nome) == identificador.lower())
-                    | (func.lower(Usuarios.email) == identificador.lower())
+                    (
+                        func.lower(func.trim(Usuarios.nome))
+                        == identificador.lower()
+                    )
+                    | (
+                        func.lower(func.trim(Usuarios.email))
+                        == identificador.lower()
+                    )
                 )
                 .first()
             )
@@ -182,12 +254,24 @@ def cadastro_usuario():
 
     if request.method == 'POST':
 
-        nome = request.form['nome']
-        email = request.form['email']
+        nome = request.form['nome'].strip()
+        email = request.form['email'].strip().lower()
         senha = request.form['senha']
         departamento = request.form['departamento']
         ramal = request.form['ramal']
         status = request.form['status']
+
+        mensagem_duplicado = (
+            'Já existe um usuário cadastrado com esse nome ou e-mail. '
+            'Use um nome de usuário e um e-mail diferentes.'
+        )
+
+        with Session() as session:
+            if _usuario_ja_cadastrado(session, nome, email):
+                return render_template(
+                    'cadastro_usuario.html',
+                    erro_cadastro=mensagem_duplicado,
+                ), 409
 
         usuario = Usuarios(
             nome,
@@ -198,11 +282,18 @@ def cadastro_usuario():
             status
         )
 
-        session = Session()
-
-        session.add(usuario)
-        session.commit()
-        session.close()
+        with Session() as session:
+            session.add(usuario)
+            try:
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                if _usuario_ja_cadastrado(session, nome, email):
+                    return render_template(
+                        'cadastro_usuario.html',
+                        erro_cadastro=mensagem_duplicado,
+                    ), 409
+                raise
 
         return redirect(url_for('usuario_cadastrado'))
 
@@ -293,17 +384,56 @@ def editar_usuario(usuario_id):
             abort(404)
 
         if request.method == 'POST':
-            usuario.nome = request.form['nome']
-            usuario.email = request.form['email']
-            usuario.departamento = request.form['departamento']
-            usuario.ramal = request.form.get('ramal', '').strip() or None
-            usuario.status = request.form['status']
+            dados_usuario = {
+                'id': usuario.id,
+                'nome': request.form['nome'].strip(),
+                'email': request.form['email'].strip().lower(),
+                'departamento': request.form['departamento'],
+                'ramal': request.form.get('ramal', '').strip() or None,
+                'status': request.form['status'],
+            }
+            mensagem_duplicado = (
+                'Já existe um usuário cadastrado com esse nome ou e-mail. '
+                'Use um nome de usuário e um e-mail diferentes.'
+            )
+            if _usuario_ja_cadastrado(
+                session,
+                dados_usuario['nome'],
+                dados_usuario['email'],
+                usuario.id,
+            ):
+                return render_template(
+                    'editar_usuario.html',
+                    usuario=dados_usuario,
+                    erro_cadastro=mensagem_duplicado,
+                ), 409
+
+            usuario.nome = dados_usuario['nome']
+            usuario.email = dados_usuario['email']
+            usuario.departamento = dados_usuario['departamento']
+            usuario.ramal = dados_usuario['ramal']
+            usuario.status = dados_usuario['status']
 
             nova_senha = request.form.get('senha', '').strip()
             if nova_senha:
                 usuario.senha = nova_senha
 
-            session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                if _usuario_ja_cadastrado(
+                    session,
+                    dados_usuario['nome'],
+                    dados_usuario['email'],
+                    usuario.id,
+                ):
+                    return render_template(
+                        'editar_usuario.html',
+                        usuario=dados_usuario,
+                        erro_cadastro=mensagem_duplicado,
+                    ), 409
+                raise
             return redirect(
                 url_for('usuario_atualizado', usuario_id=usuario.id)
             )
